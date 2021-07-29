@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var fs, { stat, createReadStream } = require('fs');
 var { promisify } = require('util');
+var compression = require('compression');
 
 const fileInfo =  promisify(stat);
 
@@ -14,6 +15,10 @@ var ejemploRouter = require('./routes/ejemplo');
 
 var app = express();
 
+let oneYear = 1 * 365 * 24 * 60 * 60 * 1000;
+
+app.use(compression());
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -22,7 +27,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: oneYear }));
 
 app.use(express.static('files'));
 
